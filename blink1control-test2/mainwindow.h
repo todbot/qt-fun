@@ -21,6 +21,7 @@ public:
     ~MainWindow();
     
 private slots:
+    void quit();
     void iconActivated(QSystemTrayIcon::ActivationReason reason);
     void messageClicked();
     void updateBlink1();

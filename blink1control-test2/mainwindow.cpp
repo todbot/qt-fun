@@ -54,7 +54,7 @@ MainWindow::MainWindow(QWidget *parent) :
     blink1dev =  blink1_open();
     blink1_fadeToRGB(blink1dev, 1000, 40,40,40 );
 
-    qDebug() << "num blink(1`)s found: " << n;
+    qDebug() << "num blink(1)s found: " << n;
 
     if( n ) {
         ui->blink1Status->setText("blink(1) connected");
@@ -75,11 +75,19 @@ MainWindow::MainWindow(QWidget *parent) :
 
 MainWindow::~MainWindow()
 {
+    qDebug() << "destructor";
     //blink1_fadeToRGB(blink1dev, 0, 0,0,0 );
     //blink1_close(blink1dev);
-    qDebug() << "exiting...";
 
     delete ui;
+}
+
+void MainWindow::quit()
+{
+    blink1_fadeToRGB(blink1dev, 0, 0,0,0 );
+    blink1_close(blink1dev);
+
+    qApp->quit();
 }
 
 void MainWindow::loadSettings()
@@ -198,7 +206,7 @@ void MainWindow::createActions()
     connect(restoreAction, SIGNAL(triggered()), this, SLOT(showNormal()));
 
     quitAction = new QAction(tr("&Quit"), this);
-    connect(quitAction, SIGNAL(triggered()), qApp, SLOT(quit()));
+    connect(quitAction, SIGNAL(triggered()), this, SLOT(quit()));
 }
 
 void MainWindow::createTrayIcon()
