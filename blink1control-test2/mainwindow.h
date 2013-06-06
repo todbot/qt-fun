@@ -6,6 +6,10 @@
 #include <QMessageBox>
 #include <QColor>
 
+#include "color_dialog.hpp"
+
+#include "blink1pattern.h"
+
 #include "blink1-lib.h"
 
 namespace Ui {
@@ -28,13 +32,16 @@ private slots:
 
     void colorChanged(QColor);
 
-    void on_ButtonRGBCycle_clicked();
+    void onColorDialogChange(QColor);
 
-    void on_ButtonMoodLight_clicked();
+    void on_buttonRGBcycle_clicked();
+    void on_buttonMoodlight_clicked();
+    void on_buttonOff_clicked();
+    void on_buttonWhite_clicked();
+    void on_buttonColorwheel_clicked();
+    void on_buttonBusyColorSpot_clicked();
 
-    void on_ButtonOff_clicked();
-
-    void on_ButtonOn_clicked();
+    void on_colorwheel_colorSelected(const QColor &);
 
 private:
     void loadSettings();
@@ -59,7 +66,12 @@ private:
     hid_device* blink1dev;
     uint8_t mode;
     //uint8_t cr,cg,cb;
-    QColor cc;
+    QColor cc;  // current color
+    Color_Dialog colorDialog;
+
+
+    //QList<Blink1Pattern> patternList;
+    QHash<QString, Blink1Pattern*> patterns;
 };
 
 #endif // MAINWINDOW_H

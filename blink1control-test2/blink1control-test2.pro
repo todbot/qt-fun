@@ -14,13 +14,16 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    blink1pattern.cpp
+    blink1pattern.cpp \
+    todgroupbox.cpp
 
 HEADERS  += mainwindow.h \
-    blink1pattern.h
+    blink1pattern.h \
+    todgroupbox.h
 
 FORMS    += mainwindow.ui \
-    dialog.ui
+    dialog.ui \
+    todgroupbox.ui
 
 #unix|win32: LIBS += -L$$PWD/../../blink1/commandline -lBlink1
 LIBS += -L$$PWD/../../blink1/commandline -lBlink1

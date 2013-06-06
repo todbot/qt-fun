@@ -6,7 +6,6 @@
 #include <QPropertyAnimation>
 #include <QDebug>
 
-
 enum {
     NONE = 0,
     RGBSET,
@@ -27,8 +26,14 @@ MainWindow::MainWindow(QWidget *parent) :
 
     loadSettings();
 
+    for( int i=0; i<5; i++) {
+        QString name = QString("pattern-%1-%2").arg(i).arg("abc");
+        Blink1Pattern* bp = new Blink1Pattern(); //name );
+        bp->name = name;
+        patterns.insert( name, bp );
+    }
+
     cc = QColor(255,0,0);
-    //cr = 255; cg = 0; cb = 0;
     ui->colorwheel->setColor( cc );
 
     QIcon ico = QIcon(":/images/blink1-icon0.png");
@@ -86,6 +91,12 @@ void MainWindow::quit()
 {
     blink1_fadeToRGB(blink1dev, 0, 0,0,0 );
     blink1_close(blink1dev);
+
+    QList<QString> pattnames = patterns.keys();
+    foreach (QString nm, pattnames ) {
+        Blink1Pattern* patt = patterns.value(nm);
+        qDebug() << "patt name: " << patt->name;
+    }
 
     qApp->quit();
 }
@@ -151,8 +162,10 @@ void MainWindow::updateBlink1()
 
         QString cname = QString("rgb(%1,%2,%3)").arg(cr).arg(cg).arg(cb);
         ui->colorpreview->setColor(cc);
+        ui->colorHexText->setText(cname);
 
-        //ui->colorwheel->setColor(c);
+        ui->colorwheel->setColor(cc);
+        /*
         QPropertyAnimation *animation = new QPropertyAnimation(ui->colorwheel, "color");
         animation->setDuration( blink1timer->interval() );
         animation->setStartValue(ui->colorwheel->color());
@@ -160,14 +173,22 @@ void MainWindow::updateBlink1()
         //animation->setEasingCurve(QEasingCurve::InOutQuad);
         animation->setEasingCurve(QEasingCurve::Linear);
         animation->start();
+        */
     }
 }
 
 void MainWindow::colorChanged(QColor c)
 {
+    ui->ButtonColorWheel->setChecked(true);
+
     cc = c; // cr = c.red(); cg = c.green(); cb = c.blue();
     mode=RGBSET;
     updateBlink1();
+}
+
+void MainWindow::on_colorwheel_colorSelected(const QColor &c)
+{
+    colorChanged(c);
 }
 
 //systray / statusbar stuff
@@ -223,27 +244,54 @@ void MainWindow::createTrayIcon()
 }
 
 
-void MainWindow::on_ButtonRGBCycle_clicked()
+void MainWindow::on_buttonRGBcycle_clicked()
 {
     mode = RGBCYCLE;
     //blink1timer->setInterval(300);
     updateBlink1();
 }
 
-void MainWindow::on_ButtonMoodLight_clicked()
+void MainWindow::on_buttonMoodlight_clicked()
 {
     mode = MOODLIGHT;
     updateBlink1();
 }
 
-void MainWindow::on_ButtonOff_clicked()
+void MainWindow::on_buttonOff_clicked()
 {
     mode = OFF;
     updateBlink1();
 }
 
-void MainWindow::on_ButtonOn_clicked()
+void MainWindow::on_buttonWhite_clicked()
 {
     mode = ON;
     updateBlink1();
 }
+
+void MainWindow::on_buttonColorwheel_clicked()
+{
+    mode = RGBSET;
+    updateBlink1();
+}
+
+void MainWindow::onColorDialogChange(QColor qc)
+{
+    //qDebug() << "color: " << qc;
+    QString cname = QString("background: rgb(%1,%2,%3)").arg(qc.red()).arg(qc.green()).arg(qc.blue());
+    ui->buttonBusyColorSpot->setStyleSheet(cname);
+    ui->buttonBusyColorSpot->setText(qc.name());
+    colorChanged(qc);
+
+}
+
+void MainWindow::on_buttonBusyColorSpot_clicked()
+{
+    qDebug() << "click!";
+    colorDialog.setColor( cc );
+    connect(&colorDialog, SIGNAL(colorChanged(QColor)), this, SLOT(onColorDialogChange(QColor)));
+    colorDialog.show();
+   // colorDialog.
+
+}
+
