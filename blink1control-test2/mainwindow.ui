@@ -50,7 +50,7 @@
      <enum>QTabWidget::North</enum>
     </property>
     <property name="currentIndex">
-     <number>1</number>
+     <number>0</number>
     </property>
     <property name="iconSize">
      <size>
@@ -103,7 +103,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QToolButton" name="buttonColorWheel">
+          <widget class="QToolButton" name="buttonColorwheel">
            <property name="autoFillBackground">
             <bool>true</bool>
            </property>
@@ -908,6 +908,10 @@
      </widget>
     </widget>
     <widget class="QWidget" name="tab_2">
+     <attribute name="icon">
+      <iconset resource="myresources.qrc">
+       <normaloff>:/images/ifttt-icon.png</normaloff>:/images/ifttt-icon.png</iconset>
+     </attribute>
      <attribute name="title">
       <string>IFTTT</string>
      </attribute>

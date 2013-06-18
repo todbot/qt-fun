@@ -71,7 +71,8 @@ private:
 
 
     //QList<Blink1Pattern> patternList;
-    QHash<QString, Blink1Pattern*> patterns;
+    // QHash<QString, Blink1Pattern*> patterns;
+    QMap<QString,Blink1Pattern*> patterns;
 };
 
 #endif // MAINWINDOW_H

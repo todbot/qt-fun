@@ -6,6 +6,11 @@
 #include <QPropertyAnimation>
 #include <QDebug>
 
+//#include <QVariant>
+//#include <QObjectHelper>
+#include <QJsonObject>
+#include <QJsonDocument>
+
 enum {
     NONE = 0,
     RGBSET,
@@ -25,13 +30,6 @@ MainWindow::MainWindow(QWidget *parent) :
     qDebug() << "appDirPath: " << QApplication::applicationDirPath();
 
     loadSettings();
-
-    for( int i=0; i<5; i++) {
-        QString name = QString("pattern-%1-%2").arg(i).arg("abc");
-        Blink1Pattern* bp = new Blink1Pattern(); //name );
-        bp->name = name;
-        patterns.insert( name, bp );
-    }
 
     cc = QColor(255,0,0);
     ui->colorwheel->setColor( cc );
@@ -53,7 +51,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(blink1timer, SIGNAL(timeout()), this, SLOT(updateBlink1()));
     blink1timer->start(1000);
 
-    blink1_disableDegamma();
+    blink1_disableDegamma();  // for mk2 only
 
     int n = blink1_enumerate();
     blink1dev =  blink1_open();
@@ -94,8 +92,12 @@ void MainWindow::quit()
 
     QList<QString> pattnames = patterns.keys();
     foreach (QString nm, pattnames ) {
-        Blink1Pattern* patt = patterns.value(nm);
-        qDebug() << "patt name: " << patt->name;
+        Blink1Pattern*  patt = patterns.value(nm);
+        qDebug() << "patt name: " << patt->name();
+        QJsonObject obj = patt->toJson();
+        QJsonDocument doc;
+        doc.setObject(obj);
+        qDebug() << "toJson: " << doc.toJson();
     }
 
     qApp->quit();
@@ -106,6 +108,33 @@ void MainWindow::loadSettings()
     QSettings settings("ThingM", "Blink1ControlQt");
     QString sText = settings.value("text", "").toString();
     ui->blink1IftttKey->setText(sText);
+
+    for( int i=0; i<5; i++) {
+        QString name = QString("pattern-%1-%2").arg(i).arg("abc");
+        Blink1Pattern* bp = new Blink1Pattern(); //name );
+        bp->setName( name );
+        bp->setPlaycount(i*3);
+        patterns.insert( name, bp );
+    }
+
+    /* test badly formatted QJsonObject
+    Blink1Pattern* bp = new Blink1Pattern();
+    QJsonObject obj = bp->toJson();
+    obj.remove("playcount");
+    obj.remove("name");
+    Blink1Pattern* bp2 = new Blink1Pattern();
+    bp2->fromJson(obj);
+    QJsonObject obj2 = bp2->toJson();
+
+    QJsonDocument doc;
+    doc.setObject(obj2);
+    qDebug() << "toJson2: " << doc.toJson();
+*/
+    /*
+    patterns = settings.value("patterns",0);
+    if( patterns = NULL ) {
+    }
+    */
 }
 
 void MainWindow::saveSettings()
@@ -113,6 +142,7 @@ void MainWindow::saveSettings()
     QSettings settings("ThingM", "Blink1ControlQt");
     QString sText = ui->blink1IftttKey->text();
     settings.setValue("text", sText);
+    //settings.setValue("patterns", patterns);
 }
 
 void MainWindow::updateBlink1()
@@ -179,7 +209,7 @@ void MainWindow::updateBlink1()
 
 void MainWindow::colorChanged(QColor c)
 {
-    ui->ButtonColorWheel->setChecked(true);
+    ui->buttonColorwheel->setChecked(true);
 
     cc = c; // cr = c.red(); cg = c.green(); cb = c.blue();
     mode=RGBSET;

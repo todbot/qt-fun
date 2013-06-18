@@ -30,6 +30,14 @@ LIBS += -L$$PWD/../../blink1/commandline -lBlink1
 INCLUDEPATH += $$PWD/../../blink1/commandline $$PWD/../../blink1/commandline/hidapi/hidapi $$PWD/../../blink1/hardware/firmware
 DEPENDPATH += $$PWD/../../blink1/commandline
 
+#macx: LIBS += -L./HIDAPI/mac -lHIDAPI
+#win32: LIBS += -L./HIDAPI/windows -lHIDAPI
+#unix: !macx: LIBS += -L./HIDAPI/linux -lHIDAPI
+#macx: LIBS += -framework CoreFoundation -framework IOkit
+#win32: LIBS += -lSetupAPI
+#unix: !macx: LIBS += -lusb-1.0
+
+
 RESOURCES += \
     myresources.qrc
 

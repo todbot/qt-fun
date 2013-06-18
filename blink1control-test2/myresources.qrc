@@ -37,5 +37,6 @@
         <file>images/trash.png</file>
         <file>images/blink1-icon0.png</file>
         <file>images/virtual_blink1-tod.png</file>
+        <file>images/ifttt-icon.png</file>
     </qresource>
 </RCC>
